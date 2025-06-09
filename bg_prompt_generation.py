@@ -44,6 +44,17 @@ generated_ids = model.generate(pixel_values=inputs["pixel_values"], max_length=5
 caption = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
 print(caption)
 
+from gpt4all import GPT4All
+
+model_name = "mistral-7b-instruct-v0.1.Q4_0.gguf"
+model_path = "C:/Users/hrish/Desktop/new_repo"
+
+model = GPT4All(model_name=model_name,model_path=model_path, allow_download=False)
+
+response = model.generate(f"Refine the prompt: {caption}")
+print("Response:", response)
+
+
 # download_backgrounds(caption,10,r"C:\Users\hrish\Desktop\datasets\dataset_004\backgrounds\web_scraping")
 
 from diffusers import StableDiffusionPipeline
