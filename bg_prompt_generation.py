@@ -4,6 +4,7 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import io
 import torch
 import logging
+from logging.handlers import RotatingFileHandler
 import cv2
 import numpy as np
 from PIL import Image
@@ -12,9 +13,35 @@ from transformers import AutoProcessor, AutoModelForCausalLM
 from gpt4all import GPT4All
 from diffusers import StableDiffusionPipeline
 
-# --- Setup logging ---
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# --- Enhanced Logging Setup ---
+def setup_logging():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    # Create file handler which logs even debug messages
+    fh = RotatingFileHandler(
+        'pipeline.log', 
+        maxBytes=5*1024*1024,  # 5MB
+        backupCount=3
+    )
+    fh.setLevel(logging.INFO)
+
+    # Create console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    # Create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    # Add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    
+    return logger
+
+logger = setup_logging()
 
 # --- Device Setup ---
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -80,12 +107,14 @@ if __name__ == "__main__":
     input_path = r"C:\Users\hrish\Desktop\datasets\dataset_001\input\images\Ancylostoma-Spp--68-_jpg.rf.92487af38bb34993d2716b49791b7866.jpg"
     bg_clean_path = "bg_only.png"
     model_name = "mistral-7b-instruct-v0.1.Q4_0.gguf"
-    model_path = r"C:\Users\hrish\Desktop\side_pipeline"
+    model_path = r"C:\Users\hrish\Desktop\prompt-driven_background_generation"
 
     try:
+        logger.info("Starting pipeline execution")
         clean_bg_path = extract_background(input_path, bg_clean_path)
         caption = generate_caption(clean_bg_path)
         refined_prompt = refine_prompt(caption, model_name, model_path)
         generate_image(refined_prompt)
+        logger.info("Pipeline completed successfully")
     except Exception as e:
-        logger.error(f"Pipeline failed: {e}")
+        logger.error(f"Pipeline failed: {str(e)}", exc_info=True)
