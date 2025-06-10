@@ -1,3 +1,6 @@
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 from transformers import AutoProcessor,AutoModelForCausalLM
 from PIL import Image
 import torch
@@ -5,7 +8,6 @@ from rembg import remove
 import io
 import cv2
 import numpy as np
-from bg_web_scraping import download_backgrounds
 
 input_path = r"C:\Users\hrish\Desktop\datasets\dataset_004\input\images\Movie-on-2-18-25-at-8_25-PM_mov-0003_jpg.rf.40ae588a0c9e10795fd345526589e35a.jpg"
 bg_clean_path = r"C:\Users\hrish\Desktop\datasets\dataset_004\input\bg_only.png"
@@ -47,15 +49,12 @@ print(caption)
 from gpt4all import GPT4All
 
 model_name = "mistral-7b-instruct-v0.1.Q4_0.gguf"
-model_path = "C:/Users/hrish/Desktop/new_repo"
+model_path = "C:/Users/hrish/Desktop/side_pipeline"
 
 model = GPT4All(model_name=model_name,model_path=model_path, allow_download=False)
 
 response = model.generate(f"Refine the prompt: {caption}")
 print("Response:", response)
-
-
-# download_backgrounds(caption,10,r"C:\Users\hrish\Desktop\datasets\dataset_004\backgrounds\web_scraping")
 
 from diffusers import StableDiffusionPipeline
 import torch
