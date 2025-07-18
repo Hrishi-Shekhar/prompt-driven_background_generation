@@ -104,7 +104,7 @@ def generate_image(prompt, output_path="generated_image.png"):
 
 # --- Main Execution ----------------------------------------------------------
 if __name__ == "__main__":
-    input_path = r"C:\Users\hrish\Desktop\datasets\dataset_001\input\images\Ancylostoma-Spp--68-_jpg.rf.92487af38bb34993d2716b49791b7866.jpg"
+    input_path = "Ancylostoma-Spp--68-_jpg.rf.92487af38bb34993d2716b49791b7866.jpg"
     bg_clean_path = "bg_only.png"
     model_name = "mistral-7b-instruct-v0.1.Q4_0.gguf"
     model_path = r"C:\Users\hrish\Desktop\prompt-driven_background_generation"
